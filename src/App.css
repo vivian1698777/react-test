@@ -4,22 +4,74 @@
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  height: 150px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
+  /* background-color: #222;
+  height: 230px;
   padding: 20px;
   color: white;
+  background-image:url(header.jpeg);  */
+  background: url('banner-01.png') center repeat-x;
+  min-height: 300px;
+  -webkit-animation: banner-slider 180s infinite linear;
+  -moz-animation: banner-slider 180s infinite linear;
+  -o-animation: banner-slider 180s infinite linear;
+  animation: banner-slider 180s infinite linear;
 }
 
 .App-title {
   font-size: 1.5em;
+  text-shadow: white 0 0 0.2em, white 0 0 0.2em, white 0 0 0.2em;
+  background-color: rgba(255, 255, 255, 0.4) ;
+  height: 35px;;
 }
 
 .App-intro {
   font-size: large;
+}
+
+@-webkit-keyframes banner-slider {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1122px 0;
+  }
+}
+
+@-moz-keyframes banner-slider {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1122px 0;
+  }
+}
+
+@-ms-keyframes banner-slider {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1122px 0;
+  }
+}
+
+@keyframes banner-slider {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1122px 0;
+  }
 }
 
 @keyframes App-logo-spin {

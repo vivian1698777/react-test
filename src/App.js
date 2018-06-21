@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.png';
+import banner from './banner-01.png';
 import './App.css';
+import CheckboxList from './list';
+import Checklist from './Checklist';
 
 function Square(props) {
   return (
@@ -166,34 +169,40 @@ class App extends Component {
     })
   }
 
+
   render() {
-    
+    const { classes } = this.props;
     let todos = this.state.todos;
 
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          {/* <img src={avengers} className="App-logo" alt="logo"/> */}
+          <h1 className="App-title">React Checklist Exercise</h1>
         </header>
         <div>
-          <button onClick={this.onClick}>Add item</button>
-          <div className="ul-div">
+          {/* <button onClick={this.onClick}>Add item</button> */}
+
+          <div className="listclass">
+            <CheckboxList />
+          </div>
+
+          {/* <div className="ul-div">
             <ul>
               {
-                todos.map( (todo) => {
+                todos.map( (todo, index) => {
                   return (
-                    <li>
+                    <li key={index}>
                       name:{todo.name}, {todo.completed ? '已完成' : '未完成'}
                     </li>
                   );
                 })
               }
             </ul>
-          </div>
+          </div> */}
         </div>
         <div>
-          <Game />
+          {/* <Game /> */}
         </div>
       </div>
     );
@@ -219,5 +228,6 @@ function calculateWinner(squares) {
   }
   return null;
 }
+
 
 export default App;

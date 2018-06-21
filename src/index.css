@@ -51,3 +51,100 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
+.addInput {
+  padding: 2px;
+  margin-right: 30px;
+  margin-left: 20px;
+  padding-left: 10px;
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-top: 50px;
+}
+
+.listclass {
+  margin-top: 36px;
+}
+
+.listclass svg {
+  margin-right: 5px;
+}
+
+/* .searchInput {
+  float: left;
+  padding: 2px;
+  margin-top: 20px;
+  margin-left: 20px;
+  padding-left: 10px;
+  border: rgb(219, 219, 219) 1px solid;
+  border-radius: 5px;
+  height: 30px;
+  width: 90%;
+  /* box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.4); */
+  /* background: url('baseline-search-24px.svg') 97% 50% no-repeat;
+} */
+
+
+/* .searchDiv {
+  position: relative;
+} */
+
+/* .SearchIcon {
+  position: absolute;
+  top: 26px;
+  right: 6px;
+} */
+
+.listDiv {
+  position: relative;
+  margin-top: 30px;
+}
+
+.filterListDiv {
+  position: absolute;
+  margin-top: -24px;
+  margin-right: 3px;
+  right: 0;
+}
+
+.SortByAlpha {
+  opacity: 0.6;
+}
+
+.ArrowUpward {
+  opacity: 0.4;
+  transform: scale(0.7, 0.8);
+  margin-left: 10px;
+  margin-right: -5px;
+}
+
+.CheckboxList-typography-4 {
+  padding: 0;
+}
+
+.listValueDate {
+  display: block;
+  font-size: 80%;
+  color: rgb(177, 176, 176);
+  float: right;
+  padding-right: 20px;
+  margin-bottom: -18px;
+}
+
+.ListItemText {
+  margin-right: 12%;
+}
+
+.name-error-text {
+  padding-left: 23px;
+  position: absolute;
+}
+
+#name-error-text {
+  color: #f44336;
+  font-size: 0.78em;
+}
