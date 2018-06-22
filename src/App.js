@@ -184,7 +184,7 @@ class App extends Component {
           {/* <button onClick={this.onClick}>Add item</button> */}
 
           <div className="listclass">
-            <CheckboxList />
+            <CheckboxList data={todos} classes={classes} />
           </div>
 
           {/* <div className="ul-div">

@@ -4,8 +4,10 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+const array = [];
+
 ReactDOM.render(
-    <App />,
+    <App data={array} />,
     document.getElementById('root')
 );
 registerServiceWorker();

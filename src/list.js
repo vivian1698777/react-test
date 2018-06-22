@@ -49,14 +49,14 @@ class CheckboxList extends React.Component {
     super(props);
     this.nextId = 1;
     this.state = {
-      error:false,
-      error1:false,
-      error2:false,
+      errorInputLine:false,
+      errorInfoNoRepeat:false,
+      errorInfoNoSpace:false,
       sortName:1,
       sortDate:1,
       sortBy: 1,
       inputValue: "",
-      searchValue: "",
+      // searchValue: "",
       editing: -1,
       checked: [],
       todos: [],
@@ -66,6 +66,7 @@ class CheckboxList extends React.Component {
   }
   // this.isDateUpwardShown
   get isDateUpwardShown() {
+    // const { data, classes } = this.props; //example of data-transfered
     const { sortDate, sortBy } = this.state;
     return sortDate === 1 && sortBy === 1;
   }
@@ -89,16 +90,12 @@ class CheckboxList extends React.Component {
     const newId = this.nextId;
     this.nextId += 1;
     var textAdd = this.state.inputValue.trim();
-    let { todos, error, error1, error2, newTodos } = this.state;
+    let { todos, errorInputLine, errorInfoNoRepeat, errorInfoNoSpace, newTodos } = this.state;
     if(textAdd === ""){
-      this.setState({inputValue:"",});
-      this.setState({ todos: newTodos });
-      this.setState({ error: true });
-      this.setState({ error2: true });
+      this.setState({inputValue:"", todos: newTodos, errorInputLine: true, errorInfoNoSpace: true });
       return;
     } else {
-      this.setState({ error: false });
-      this.setState({ error2: false });
+      this.setState({ errorInputLine: false, errorInfoNoSpace: false });
     }
 
     let sameCheck = todos.find(function(item, index, array){
@@ -106,12 +103,10 @@ class CheckboxList extends React.Component {
     });
 
     if (sameCheck!==undefined){
-      this.setState({ error: true })
-      this.setState({ error1: true })
+      this.setState({ errorInputLine: true, errorInfoNoRepeat: true })
       return;
     } else {
-      this.setState({ error: false })
-      this.setState({ error1: false })
+      this.setState({ errorInputLine: false, errorInfoNoRepeat: false })
     }
 
     var dateNow = new Date();
@@ -140,25 +135,25 @@ class CheckboxList extends React.Component {
   };
 
   handleSameCheck = () => {
-    let { todos, error } = this.state;
+    let { todos, errorInputLine } = this.state;
     var textAdd = this.state.inputValue;
     let sameCheck = todos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
     if (sameCheck!==undefined){
-      this.setState({ error: true })
+      this.setState({ errorInputLine: true })
       return;
     }
-    this.setState({ error: false })
-  }
+      this.setState({ errorInputLine: false })
+    }
 
 
-  onBlurInput = (id) => {
-    const { editing } = this.state;
+  onBlurInput = () => {
     this.setState({
-      editing: !editing,
+      editing: -1,
     });
+    console.log("blur");
   }
 
   onDelete = (id) => {
@@ -181,11 +176,10 @@ class CheckboxList extends React.Component {
     this.setState({ todos: todos });
   }
 
-  textChangeBind = (id) => {
+  textChangeBind = (value) => {
     const { editing } = this.state;
-
     this.setState({
-      editing: editing === id ? -1 : id,
+      editing: editing === value.id ? -1 : value.id,
     });
   }
 
@@ -213,17 +207,13 @@ class CheckboxList extends React.Component {
     const {todos} = this.state;
     var {newTodos} = this.state;
 
-    let { error, error1, error2 } = this.state;
+    let { errorInputLine, errorInfoNoRepeat, errorInfoNoSpace } = this.state;
     var textAdd = this.state.inputValue;
     let sameCheck = newTodos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
-    this.setState({ inputValue: event.target.value })  
-
-    this.setState({ error: false })
-    this.setState({ error1: false })
-    this.setState({ error2: false })
+    this.setState({ inputValue: event.target.value, errorInputLine: false, errorInfoNoRepeat: false, errorInfoNoSpace: false })  
 
     if (event.target.value === '') {
       this.setState({ todos: newTodos })
@@ -287,7 +277,7 @@ class CheckboxList extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let { todos, editing, error, error2, error1, sortName, sortDate, sortBy } = this.state;
+    let { todos, editing, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
     const { anchorEl } = this.state;
 
     var textAdd = this.state.inputValue;
@@ -309,7 +299,7 @@ class CheckboxList extends React.Component {
               'aria-label': 'Description',
             }}
             className="addInput"
-            error={ error }
+            error={ errorInputLine }
         />
         
         <Button 
@@ -325,7 +315,7 @@ class CheckboxList extends React.Component {
         <FormHelperText 
             id="name-error-text"
             className="name-error-text"
-            style={{ display: error1 == false && 'none' }}
+            style={{ display: errorInfoNoRepeat == false && 'none' }}
         >
           Your list name cannot be repeated.
         </FormHelperText>
@@ -333,7 +323,7 @@ class CheckboxList extends React.Component {
         <FormHelperText 
             id="name-error-text"
             className="name-error-text"
-            style={{ display: error2 == false && 'none' }}
+            style={{ display: errorInfoNoSpace == false && 'none' }}
         >
           Your value cannot be empty.
         </FormHelperText>
@@ -446,7 +436,7 @@ class CheckboxList extends React.Component {
                     onChange={(event) => this.textChange(value.id, event.target.value)}
                     className="valinput"
                     style={{ display: editing !== value.id && 'none' }}
-                    onBlur={() => this.onBlurInput(value.id)}
+                    onBlur={() => this.onBlurInput()}
                   />
                   <span
                     style={{ display: editing === value.id && 'none' }}
@@ -463,7 +453,7 @@ class CheckboxList extends React.Component {
                 <ListItemSecondaryAction>
                   <IconButton aria-label="Create">
                     <CreateIcon
-                      onClick={() => this.textChangeBind(value.id)}
+                      onClick={() => this.textChangeBind(value)}
                     />
                   </IconButton>
                   <IconButton aria-label="Delete">
