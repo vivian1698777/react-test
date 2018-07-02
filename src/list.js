@@ -110,11 +110,13 @@ class CheckboxList extends React.Component {
     }
 
     var dateNow = new Date();
-
+    
+    const tempTodos = this.state.newTodos;
+    console.log({...this.state.newTodos});
     this.setState({
       inputValue: "",
       todos: [
-        ...this.state.newTodos,
+        ...tempTodos,
         {
           id: newId,
           name: textAdd,
@@ -149,30 +151,63 @@ class CheckboxList extends React.Component {
     }
 
 
-  onBlurInput = () => {
+  onBlurInput = (id, inputValue) => {
+    const { todos,newTodos } = this.state;
+    // var textAddInput = this.value;
+    console.log(todos[0]);
+    console.log(newTodos[0]);
+    const index = newTodos.findIndex(
+      newTodo => newTodo.id === id
+    );
+
+    console.log(index)
+    
+    let sameCheck = newTodos.find(function(item, index, array){
+      if(item.name === inputValue){
+        return true;
+      }else{
+        return false;
+      }  
+    });
+    if (sameCheck !== undefined && sameCheck !== newTodos[index]){
+      // this.setState({ errorInputLine: true, errorInfoNoRepeat: true })
+      this.setState({
+        editing: id,
+      });
+      return;
+    }
+    newTodos[index].name = inputValue;
     this.setState({
       editing: -1,
+      newTodos: newTodos,
+      todos: [
+        ...this.state.newTodos,
+      ]
     });
-    console.log("blur");
+
   }
 
   onDelete = (id) => {
-    const { todos } = this.state;
-    const index = todos.findIndex(
-      todo => todo.id === id
+    const { newTodos } = this.state;
+    const index = newTodos.findIndex(
+      newTodo => newTodo.id === id
     );
-    todos.splice(index, 1);
-    this.setState({ todos: todos })
+    newTodos.splice(index, 1);
+    this.setState({ 
+      newTodos: newTodos,
+      todos: [
+        ...this.state.newTodos,
+      ]
+    })
   };
 
   textChange = (id, value) => {
-    const { todos } = this.state;
-    const text = todos.findIndex(
+    const { todos,newTodos } = this.state;
+    const index = todos.findIndex(
       todo => todo.id === id
     );
 
-    todos[text].name = value;
-
+    todos[index].name = value;
     this.setState({ todos: todos });
   }
 
@@ -224,6 +259,7 @@ class CheckboxList extends React.Component {
       const fuse = new Fuse(newTodos, options); 
       const result = fuse.search(event.target.value);
 
+      console.log(result);
       this.setState({ todos: result })
     }
     
@@ -276,6 +312,8 @@ class CheckboxList extends React.Component {
 
 
   render() {
+    console.log('todos', this.state.todos);
+    console.log('newTodos', this.state.newTodos);
     const { classes } = this.props;
     let { todos, editing, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
     const { anchorEl } = this.state;
@@ -432,11 +470,11 @@ class CheckboxList extends React.Component {
 
                   <input
                     autoFocus={editing}
-                    defaultValue={value.name}
+                    value={value.name}
                     onChange={(event) => this.textChange(value.id, event.target.value)}
                     className="valinput"
                     style={{ display: editing !== value.id && 'none' }}
-                    onBlur={() => this.onBlurInput()}
+                    onBlur={(event) => this.onBlurInput(value.id, event.target.value)}
                   />
                   <span
                     style={{ display: editing === value.id && 'none' }}
