@@ -101,8 +101,8 @@ class CheckboxList extends React.Component {
   onClickAdd = () => {
     const newId = this.nextId;
     this.nextId += 1;
-    let textAdd = this.state.inputValue.trim();
-    let { todos, errorInputLine, errorInfoNoRepeat, errorInfoNoSpace, newTodos } = this.state;
+    const textAdd = this.state.inputValue.trim();
+    const { todos, errorInputLine, errorInfoNoRepeat, errorInfoNoSpace, newTodos } = this.state;
     if(textAdd === ""){
       this.setState({inputValue:"", todos: newTodos, errorInputLine: true, errorInfoNoSpace: true });
       return;
@@ -110,7 +110,7 @@ class CheckboxList extends React.Component {
       this.setState({ errorInputLine: false, errorInfoNoSpace: false });
     }
 
-    let sameCheck = todos.find(function(item, index, array){
+    const sameCheck = todos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
@@ -121,7 +121,7 @@ class CheckboxList extends React.Component {
       this.setState({ errorInputLine: false, errorInfoNoRepeat: false })
     }
 
-    let dateNow = new Date();
+    const dateNow = new Date();
     
     this.setState({
       inputValue: "",
@@ -147,9 +147,9 @@ class CheckboxList extends React.Component {
   };
 
   handleSameCheck = () => {
-    let { todos, errorInputLine } = this.state;
-    let textAdd = this.state.inputValue;
-    let sameCheck = todos.find(function(item, index, array){
+    const { todos, errorInputLine } = this.state;
+    const textAdd = this.state.inputValue;
+    const sameCheck = todos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
@@ -167,7 +167,7 @@ class CheckboxList extends React.Component {
       newTodo => newTodo.id === id
     );
     
-    let sameCheck = newTodos.find(function(item, index, array){
+    const sameCheck = newTodos.find(function(item, index, array){
       return item.name === editingValue && item.id !== id;
     });
 
@@ -194,11 +194,11 @@ class CheckboxList extends React.Component {
     });
 
     if (sortBy === 2) {
-      let {sortName, sortNameBk} = this.state;
+      const {sortName, sortNameBk} = this.state;
 
       newTodos.sort(function(a, b){
-        let nameA = a.name.toUpperCase();
-        let nameB = b.name.toUpperCase();
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
         if (nameA < nameB) {
           return 1*sortName;
         }
@@ -208,7 +208,7 @@ class CheckboxList extends React.Component {
         return 0;
       })
     } else if (sortBy === 1) {
-      let {sortDate, sortDateBk} = this.state;
+      const {sortDate, sortDateBk} = this.state;
       newTodos.sort(function (a, b) {
         return (b.date - a.date)*-1*sortDate ;
       });
@@ -251,7 +251,7 @@ class CheckboxList extends React.Component {
         editingValue: value.name,
       });
     }else{
-      let sameCheck = newTodos.find(function(item, index, array){
+      const sameCheck = newTodos.find(function(item, index, array){
         return item.name === editingValue && item.id !== value.id;
       });
       if (sameCheck){
@@ -293,9 +293,9 @@ class CheckboxList extends React.Component {
 
     const {todos, newTodos} = this.state;
 
-    let { errorInputLine, errorInfoNoRepeat, errorInfoNoSpace } = this.state;
-    let textAdd = this.state.inputValue;
-    let sameCheck = newTodos.find(function(item, index, array){
+    const { errorInputLine, errorInfoNoRepeat, errorInfoNoSpace } = this.state;
+    const textAdd = this.state.inputValue;
+    const sameCheck = newTodos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
@@ -318,11 +318,11 @@ class CheckboxList extends React.Component {
 
   SortByName = () => {
 
-    let {sortName, sortNameBk, newTodos} = this.state;
+    const {sortName, sortNameBk, newTodos} = this.state;
 
     newTodos.sort(function(a, b){
-      let nameA = a.name.toUpperCase();
-      let nameB = b.name.toUpperCase();
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
       if (nameA < nameB) {
         return -1*sortName;
       }
@@ -337,7 +337,7 @@ class CheckboxList extends React.Component {
   }
 
   SortByDate = () => {
-    let {sortDate, sortDateBk, newTodos} = this.state;
+    const {sortDate, sortDateBk, newTodos} = this.state;
 
     newTodos.sort(function (a, b) {
       return (b.date - a.date)*sortDate ;
@@ -362,11 +362,11 @@ class CheckboxList extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let { todos, editing, editingValue, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
+    const { todos, editing, editingValue, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
     const { anchorEl } = this.state;
 
-    let textAdd = this.state.inputValue;
-    let sameCheck = todos.find(function(item, index, array){
+    const textAdd = this.state.inputValue;
+    const sameCheck = todos.find(function(item, index, array){
       return item.name === textAdd;  
     });
 
