@@ -49,6 +49,8 @@ class CheckboxList extends React.Component {
     super(props);
     this.nextId = 1;
     this.state = {
+      errorInfoNoSpaceInput:false,
+      errorInfoNoRepeatInput:false,
       errorInputLine:false,
       errorInfoNoRepeat:false,
       errorInfoNoSpace:false,
@@ -56,7 +58,7 @@ class CheckboxList extends React.Component {
       sortDate:1,
       sortBy: 1,
       inputValue: "",
-      // searchValue: "",
+      editingValue: "",
       editing: -1,
       checked: [],
       todos: [],
@@ -86,6 +88,16 @@ class CheckboxList extends React.Component {
     return sortName === 1 && sortBy === 2;
   }
 
+  errorInfoNoRepeatInputFunc(value) {
+    const { errorInfoNoRepeatInput, editing } = this.state;
+    return errorInfoNoRepeatInput !== false && editing === value.id;
+  }
+
+  errorInfoNoSpaceInputFunc(value) {
+    const { errorInfoNoSpaceInput, editing } = this.state;
+    return errorInfoNoSpaceInput !== false && editing === value.id;
+  }
+
   onClickAdd = () => {
     const newId = this.nextId;
     this.nextId += 1;
@@ -111,12 +123,10 @@ class CheckboxList extends React.Component {
 
     var dateNow = new Date();
     
-    const tempTodos = this.state.newTodos;
-    console.log({...this.state.newTodos});
     this.setState({
       inputValue: "",
       todos: [
-        ...tempTodos,
+        ...this.state.newTodos,
         {
           id: newId,
           name: textAdd,
@@ -152,39 +162,58 @@ class CheckboxList extends React.Component {
 
 
   onBlurInput = (id, inputValue) => {
-    const { todos,newTodos } = this.state;
-    // var textAddInput = this.value;
-    console.log(todos[0]);
-    console.log(newTodos[0]);
+    const { todos, newTodos, editingValue, sortBy, editing } = this.state;
     const index = newTodos.findIndex(
       newTodo => newTodo.id === id
     );
-
-    console.log(index)
     
     let sameCheck = newTodos.find(function(item, index, array){
-      if(item.name === inputValue){
-        return true;
-      }else{
-        return false;
-      }  
+      return item.name === editingValue && item.id !== id;
     });
-    if (sameCheck !== undefined && sameCheck !== newTodos[index]){
-      // this.setState({ errorInputLine: true, errorInfoNoRepeat: true })
+
+    if (sameCheck){
       this.setState({
         editing: id,
+        errorInfoNoRepeatInput: true,
+      });
+      return;
+    } else if (editingValue.trim() === "") {
+      this.setState({
+        editing: id,
+        errorInfoNoSpaceInput: true,
       });
       return;
     }
     newTodos[index].name = inputValue;
     this.setState({
+      errorInfoNoRepeatInput: false,
+      errorInfoNoSpaceInput: false,
       editing: -1,
       newTodos: newTodos,
-      todos: [
-        ...this.state.newTodos,
-      ]
+      todos: newTodos,
     });
 
+    if (sortBy === 2) {
+      let {sortName, sortNameBk} = this.state;
+
+      newTodos.sort(function(a, b){
+        var nameA = a.name.toUpperCase();
+        var nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return 1*sortName;
+        }
+        if (nameA > nameB) {
+          return -1*sortName;
+        }
+        return 0;
+      })
+    } else if (sortBy === 1) {
+      var {sortDate, sortDateBk} = this.state;
+      newTodos.sort(function (a, b) {
+        return (b.date - a.date)*-1*sortDate ;
+      });
+    }
+    this.setState({ newTodos:newTodos, todos:newTodos, anchorEl: null })
   }
 
   onDelete = (id) => {
@@ -195,27 +224,50 @@ class CheckboxList extends React.Component {
     newTodos.splice(index, 1);
     this.setState({ 
       newTodos: newTodos,
-      todos: [
-        ...this.state.newTodos,
-      ]
+      todos: newTodos,
     })
   };
 
   textChange = (id, value) => {
-    const { todos,newTodos } = this.state;
+    const { todos, editingValue } = this.state;
     const index = todos.findIndex(
       todo => todo.id === id
     );
 
     todos[index].name = value;
-    this.setState({ todos: todos });
+    this.setState({ 
+      todos: todos,
+      editingValue: todos[index].name,
+      errorInfoNoRepeatInput: false,
+      errorInfoNoSpaceInput: false
+     });
   }
 
   textChangeBind = (value) => {
-    const { editing } = this.state;
-    this.setState({
-      editing: editing === value.id ? -1 : value.id,
-    });
+    const { editing, editingValue, newTodos } = this.state;
+    if(editing===-1){
+      this.setState({
+        editing: editing === value.id ? -1 : value.id,
+        editingValue: value.name,
+      });
+    }else{
+      let sameCheck = newTodos.find(function(item, index, array){
+        return item.name === editingValue && item.id !== value.id;
+      });
+      if (sameCheck){
+        this.setState({ errorInfoNoRepeatInput: true })
+        return;
+      } else if (editingValue.trim() === "") {
+        this.setState({ errorInfoNoSpaceInput: true, errorInfoNoRepeatInput: false })
+        return;
+      }
+      this.setState({
+        editing: editing === value.id ? -1 : value.id,
+        editingValue: value.name,
+        errorInfoNoRepeatInput: false,
+        errorInfoNoSpaceInput: false,
+      });
+    }
   }
 
   // https://pjchender.blogspot.com/2017/01/es6-object-destructuring.html
@@ -223,7 +275,7 @@ class CheckboxList extends React.Component {
 
   handleToggle = value => () => {
     const { checked } = this.state;
-    const currentIndex = checked.indexOf(value);
+    const currentIndex = checked.findIndex(item => item.id === value.id);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
@@ -267,10 +319,10 @@ class CheckboxList extends React.Component {
 
   SortByName = () => {
 
-    let todos = [...this.state.todos]
+    let newTodos = [...this.state.newTodos];
     var {sortName, sortNameBk} = this.state;
 
-    todos.sort(function(a, b){
+    newTodos.sort(function(a, b){
       var nameA = a.name.toUpperCase();
       var nameB = b.name.toUpperCase();
       if (nameA < nameB) {
@@ -283,18 +335,18 @@ class CheckboxList extends React.Component {
       return 0;
     })
 
-    this.setState({ todos:todos, sortName:sortName*-1, anchorEl: null, sortBy: 2 })
+    this.setState({ newTodos:newTodos, todos:newTodos, sortName:sortName*-1, anchorEl: null, sortBy: 2 })
   }
 
   SortByDate = () => {
-    let todos = [...this.state.todos];
+    let newTodos = [...this.state.newTodos];
     var {sortDate, sortDateBk} = this.state;
 
-    todos.sort(function (a, b) {
-      return (a.date - b.date)*sortDate ;
+    newTodos.sort(function (a, b) {
+      return (b.date - a.date)*sortDate ;
     });
 
-    this.setState({ todos:todos, sortDate:sortDate*-1, anchorEl: null, sortBy: 1 })
+    this.setState({ newTodos:newTodos, todos:newTodos, sortDate:sortDate*-1, anchorEl: null, sortBy: 1 })
   }
 
   handleOpen = event => {
@@ -315,7 +367,7 @@ class CheckboxList extends React.Component {
     console.log('todos', this.state.todos);
     console.log('newTodos', this.state.newTodos);
     const { classes } = this.props;
-    let { todos, editing, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
+    let { todos, editing, editingValue, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
     const { anchorEl } = this.state;
 
     var textAdd = this.state.inputValue;
@@ -327,8 +379,6 @@ class CheckboxList extends React.Component {
       <div className={classes.root}>
         <Input
             type="text"
-            // value={this.textInput ? console.log(this.textInput) : ""}
-            // ref={this.textInput}
             value={this.state.inputValue}
             onChange={event => this.searchClick(event)}
             onKeyPress={event => { if (event.key === "Enter") { this.onClickAdd();}} }
@@ -353,7 +403,7 @@ class CheckboxList extends React.Component {
         <FormHelperText 
             id="name-error-text"
             className="name-error-text"
-            style={{ display: errorInfoNoRepeat == false && 'none' }}
+            style={{ display: errorInfoNoRepeat === false && 'none' }}
         >
           Your list name cannot be repeated.
         </FormHelperText>
@@ -361,7 +411,7 @@ class CheckboxList extends React.Component {
         <FormHelperText 
             id="name-error-text"
             className="name-error-text"
-            style={{ display: errorInfoNoSpace == false && 'none' }}
+            style={{ display: errorInfoNoSpace === false && 'none' }}
         >
           Your value cannot be empty.
         </FormHelperText>
@@ -387,13 +437,12 @@ class CheckboxList extends React.Component {
         <div className="listDiv">
 
           <div className="filterListDiv"
-               style={{ display: todos.length == 0 && 'none' }}
+               style={{ display: todos.length === 0 && 'none' }}
           >
             <FormControl className={classes.formControl} >
               <IconButton onClick={this.handleOpen}
               >
                 <SortByAlpha className="SortByAlpha"
-                                // style={{ display: sortIcon == false && 'none' }}
                 />
               </IconButton>
             </FormControl>
@@ -470,7 +519,7 @@ class CheckboxList extends React.Component {
 
                   <input
                     autoFocus={editing}
-                    value={value.name}
+                    value={editingValue}
                     onChange={(event) => this.textChange(value.id, event.target.value)}
                     className="valinput"
                     style={{ display: editing !== value.id && 'none' }}
@@ -486,8 +535,24 @@ class CheckboxList extends React.Component {
                   >
                     {value.date.getFullYear()}/{value.date.getMonth()}/{value.date.getDate()}
                   </span>
-                  {/* , object {value.number}, {value.completed ? '已完成' : '未完成'} */}
+
+                  <FormHelperText 
+                    id="name-error-text"
+                    className="name-error-text-input"
+                    style={{ display: !this.errorInfoNoRepeatInputFunc(value) && 'none' }}
+                   >
+                    Your list name cannot be repeated.
+                  </FormHelperText>
+
+                  <FormHelperText 
+                    id="name-error-text"
+                    className="name-error-text-input-space"
+                    style={{ display: !this.errorInfoNoSpaceInputFunc(value) && 'none' }}
+                  >
+                    Your value cannot be empty.          
+                  </FormHelperText>
                 </ListItemText>
+
                 <ListItemSecondaryAction>
                   <IconButton aria-label="Create">
                     <CreateIcon
