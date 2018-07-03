@@ -148,3 +148,18 @@ body {
   color: #f44336;
   font-size: 0.78em;
 }
+
+.name-error-text-input {
+  padding-left: 0px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 6px;
+}
+
+.name-error-text-input-space {
+  padding-left: 0px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 6px;
+  width: 200px;
+}
