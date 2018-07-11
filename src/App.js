@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 // import logo from './logo.png';
 import banner from './banner-01.png';
 import './App.css';
-import CheckboxList from './list';
-import Checklist from './Checklist';
+// import CheckboxList from './list';
+import CheckboxList from './Checklist';
 
 function Square(props) {
   return (
@@ -144,35 +144,34 @@ class Game extends Component {
 }
 
 class App extends Component {
-  constructor (props) {
-    super(props);
+  // constructor (props) {
+  //   super(props);
 
-    this.onClick = this.onClick.bind(this);
+  //   this.onClick = this.onClick.bind(this);
 
-    this.state = {
-      todos: [
-        {id: 1, name: 'hello', completed: false},
-        {id: 2, name: 'great', completed: true},
-        {id: 3, name: 'world', completed: false}
-      ]
-    }
-  }
+  //   this.state = {
+  //     todos: [
+  //       {id: 1, name: 'hello', completed: false},
+  //       {id: 2, name: 'great', completed: true},
+  //       {id: 3, name: 'world', completed: false}
+  //     ]
+  //   }
+  // }
 
-  onClick() {
-    var newId = Math.floor(Math.random()*500);
+  // onClick() {
+  //   var newId = Math.floor(Math.random()*500);
 
-    this.setState({
-      todos: [
-        ...this.state.todos,
-        {id: newId, name: "我是" + newId, completed: false}
-      ]
-    })
-  }
+  //   this.setState({
+  //     todos: [
+  //       ...this.state.todos,
+  //       {id: newId, name: "我是" + newId, completed: false}
+  //     ]
+  //   })
+  // }
 
 
   render() {
     const { classes } = this.props;
-    let todos = this.state.todos;
 
     return (
       <div className="App">
@@ -184,7 +183,7 @@ class App extends Component {
           {/* <button onClick={this.onClick}>Add item</button> */}
 
           <div className="listclass">
-            <CheckboxList data={todos} classes={classes} />
+            <CheckboxList classes={classes} />
           </div>
 
           {/* <div className="ul-div">
@@ -228,5 +227,6 @@ function calculateWinner(squares) {
   }
   return null;
 }
+
 
 export default App;

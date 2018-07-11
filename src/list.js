@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -22,29 +23,44 @@ import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Fuse from 'fuse.js';
+import * as actionCreators from './action';
 
-const styles = theme => ({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  input: {
-    margin: theme.spacing.unit,
-  },
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
-    marginRight: 'auto',
-    marginLeft: 'auto',
-  },
-  typography: {
-    margin: theme.spacing.unit * 2,
-  },
+// const styles = theme => ({
+//   container: {
+//     display: 'flex',
+//     flexWrap: 'wrap',
+//   },
+//   input: {
+//     margin: theme.spacing.unit,
+//   },
+//   root: {
+//     width: '100%',
+//     maxWidth: 360,
+//     backgroundColor: theme.palette.background.paper,
+//     marginRight: 'auto',
+//     marginLeft: 'auto',
+//   },
+//   typography: {
+//     margin: theme.spacing.unit * 2,
+//   },
 
-});
+// });
 
 class CheckboxList extends React.Component {
+  static propTypes = {
+    todos: PropTypes.arrayOf(PropTypes.object),
+    newTodos: PropTypes.arrayOf(PropTypes.object),
+    onItemAdd: PropTypes.func,
+    onItemDel: PropTypes.func,
+  }
+
+  static defaultProps = {
+    todos: [],
+    newTodos: [],
+    onItemAdd: Function.prototype,
+    onItemDel: Function.prototype,
+  }
+
   constructor(props) {
     super(props);
     this.nextId = 1;
@@ -99,6 +115,7 @@ class CheckboxList extends React.Component {
   }
 
   onClickAdd = () => {
+    const { onItemAdd } = this.props;
     const newId = this.nextId;
     this.nextId += 1;
     const textAdd = this.state.inputValue.trim();
@@ -122,28 +139,36 @@ class CheckboxList extends React.Component {
     }
 
     const dateNow = new Date();
+
+    onItemAdd(
+      {
+        id: newId,
+        name: textAdd,
+        date: dateNow,
+      },
+    );
     
-    this.setState({
-      inputValue: "",
-      todos: [
-        ...this.state.newTodos,
-        {
-          id: newId,
-          name: textAdd,
-          date: dateNow
-          //name: `I am ${newId}`,  // 'I am ' + newId
-        },
-      ],
-      newTodos: [
-        ...this.state.newTodos,
-        {
-          id: newId,
-          name: textAdd,
-          date: dateNow
-          //name: `I am ${newId}`,  // 'I am ' + newId
-        },
-      ]
-    })
+    // this.setState({
+    //   inputValue: "",
+    //   todos: [
+    //     ...this.state.newTodos,
+    //     {
+    //       id: newId,
+    //       name: textAdd,
+    //       date: dateNow
+    //       //name: `I am ${newId}`,  // 'I am ' + newId
+    //     },
+    //   ],
+    //   newTodos: [
+    //     ...this.state.newTodos,
+    //     {
+    //       id: newId,
+    //       name: textAdd,
+    //       date: dateNow
+    //       //name: `I am ${newId}`,  // 'I am ' + newId
+    //     },
+    //   ]
+    // })
   };
 
   handleSameCheck = () => {
@@ -361,6 +386,7 @@ class CheckboxList extends React.Component {
 
 
   render() {
+    const { onItemDel, call } = this.props;
     const { classes } = this.props;
     const { todos, editing, editingValue, errorInputLine, errorInfoNoSpace, errorInfoNoRepeat, sortName, sortDate, sortBy } = this.state;
     const { anchorEl } = this.state;
@@ -371,7 +397,7 @@ class CheckboxList extends React.Component {
     });
 
     return (
-      <div className={classes.root}>
+      <div>
         <Input
             type="text"
             value={this.state.inputValue}
@@ -389,7 +415,7 @@ class CheckboxList extends React.Component {
             onClick={this.onClickAdd}
             variant="contained" 
             color="primary" 
-            className={classes.button}
+            // className={classes.button}
             disableRipple={true}
         >
             Add item
@@ -434,7 +460,7 @@ class CheckboxList extends React.Component {
           <div className="filterListDiv"
                style={{ display: todos.length === 0 && 'none' }}
           >
-            <FormControl className={classes.formControl} >
+            <FormControl >
               <IconButton onClick={this.handleOpen}
               >
                 <SortByAlpha className="SortByAlpha"
@@ -556,7 +582,7 @@ class CheckboxList extends React.Component {
                   </IconButton>
                   <IconButton aria-label="Delete">
                     <DeleteIcon
-                      onClick={() => this.onDelete(value.id)}
+                      onClick={() => this.onItemDel(value.id)}
                     />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -573,4 +599,11 @@ CheckboxList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(CheckboxList);
+// export default withStyles(styles)(CheckboxList);
+
+
+const mapStateToProps = store => (
+  { todos: store.todos }
+);
+
+// export default connect(mapStateToProps, actionCreators)(CheckboxList);
