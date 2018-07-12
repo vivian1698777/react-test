@@ -11,7 +11,7 @@ const array = [];
 
 const store = createStore(
     itemApp,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__, /* eslint-disable-line */
+    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__, /* eslint-disable-line */
   );
 
 ReactDOM.render(

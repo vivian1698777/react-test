@@ -26,282 +26,284 @@ import * as actionCreators from './action';
 
 
 class CheckboxList extends React.Component {
-
   static propTypes = {
-    onItemAdd: PropTypes.func,
-    onItemDel: PropTypes.func,
-    callUpdate: PropTypes.func,
-    onErrorAddNoSpace: PropTypes.func,
-    onErrorAddNoRepeat: PropTypes.func,
-    onErrorNormal: PropTypes.func,
-    onInputReset: PropTypes.func,
-    onStateSorting: PropTypes.func,
-    onErrorInputNoRepeat: PropTypes.func,
-    onErrorInputNoSpace: PropTypes.func,
-    onInputEditing: PropTypes.func,
-    onSortingAnchor: PropTypes.func,
-    sortingState: PropTypes.func,
-    onItemSerNothing: PropTypes.func,
-    onItemSerResult: PropTypes.func,
-    onInputTarget: PropTypes.func,
-    onItemEdit: PropTypes.func,
-    onChecked: PropTypes.func,
-    onSortingDate: PropTypes.func,
-    onSortingBy: PropTypes.func,
-    onSortingName: PropTypes.func,
-    errors: PropTypes.func,
+    addItem: PropTypes.func,
+    delItem: PropTypes.func,
+    listItemsPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    errorAddNoSpace: PropTypes.func,
+    errorAddNoRepeat: PropTypes.func,
+    errorNormal: PropTypes.func,
+    resetInput: PropTypes.func,
+    sortState: PropTypes.func,
+    errorInputNoRepeat: PropTypes.func,
+    errorInputNoSpace: PropTypes.func,
+    editInput: PropTypes.func,
+    sortAnchor: PropTypes.func,
+    sortingPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    searchNothing: PropTypes.func,
+    searchResult: PropTypes.func,
+    isChangeInput: PropTypes.func,
+    editItem: PropTypes.func,
+    isChecked: PropTypes.func,
+    sortingDate: PropTypes.func,
+    sortingBy: PropTypes.func,
+    sortingName: PropTypes.func,
+    errorsPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   };
 
   static defaultProps = {
-    onItemAdd: Function.prototype,
-    onItemDel: Function.prototype,
-    callUpdate: Function.prototype,
-    onErrorAddNoSpace: Function.prototype,
-    onErrorAddNoRepeat: Function.prototype,
-    onErrorNormal: Function.prototype,
-    onInputReset: Function.prototype,
-    onStateSorting: Function.prototype,
-    onErrorInputNoRepeat: Function.prototype,
-    onErrorInputNoSpace: Function.prototype,
-    onInputEditing: Function.prototype,
-    onSortingAnchor: Function.prototype,
-    sortingState: Function.prototype,
-    onItemSerNothing: Function.prototype,
-    onItemSerResult: Function.prototype,
-    onInputTarget: Function.prototype,
-    onItemEdit: Function.prototype,
-    onChecked: Function.prototype,
-    onSortingDate: Function.prototype,
-    onSortingBy: Function.prototype,
-    onSortingName: Function.prototype,
-    errors: Function.prototype,
+    addItem: Function.prototype,
+    delItem: Function.prototype,
+    listItemsPackage: Object.prototype,
+    errorAddNoSpace: Function.prototype,
+    errorAddNoRepeat: Function.prototype,
+    errorNormal: Function.prototype,
+    resetInput: Function.prototype,
+    sortState: Function.prototype,
+    errorInputNoRepeat: Function.prototype,
+    errorInputNoSpace: Function.prototype,
+    editInput: Function.prototype,
+    sortAnchor: Function.prototype,
+    sortingPackage: Object.prototype,
+    searchNothing: Function.prototype,
+    searchResult: Function.prototype,
+    isChangeInput: Function.prototype,
+    editItem: Function.prototype,
+    isChecked: Function.prototype,
+    sortingDate: Function.prototype,
+    sortingBy: Function.prototype,
+    sortingName: Function.prototype,
+    errorsPackage: Object.prototype,
   }
 
   constructor(props) {
     super(props);
     this.nextId = 1;
+
+    this.onClickAdd = this.onClickAdd.bind(this);
   }
 
   onClickAdd = () => {
     const {
-      onItemAdd, callUpdate, onInputReset, onErrorAddNoSpace, onErrorAddNoRepeat, onErrorNormal,
+      addItem, listItemsPackage, resetInput, errorAddNoSpace, errorAddNoRepeat, errorNormal,
     } = this.props;
     const newId = this.nextId;
     this.nextId += 1;
-    const textAdd = callUpdate.inputValue.trim();
+    const textAdd = listItemsPackage.inputValue.trim();
 
     const dateNow = new Date();
 
     if (textAdd === '') {
-      onInputReset({});
-      onErrorAddNoSpace({});
+      resetInput({});
+      errorAddNoSpace({});
       return;
     }
-    onErrorNormal({});
+    errorNormal({});
 
-    const sameCheck = callUpdate.todos.find(function (item) {
+    const sameCheck = listItemsPackage.todos.find(function (item) {
       return item.name === textAdd;
     });
 
+    console.log(listItemsPackage.todos);
     if (sameCheck !== undefined) {
-      onErrorAddNoRepeat({});
+      errorAddNoRepeat({});
       return;
     }
+    console.log(123);
 
-    onErrorNormal({});
+    errorNormal({});
 
-    onItemAdd(
+    addItem(
       {
-        AddId: newId,
-        AddName: textAdd,
-        AddDate: dateNow,
+        id: newId,
+        name: textAdd,
+        date: dateNow,
       },
     );
 
-    onInputReset({});
+    resetInput({});
   }
 
   onBlurInput = (id, blurInputValue) => {
     const {
-      callUpdate, onStateSorting, onErrorNormal, onErrorInputNoRepeat, onErrorInputNoSpace, onInputEditing, onSortingAnchor, sortingState 
+      listItemsPackage, sortState, errorNormal, errorInputNoRepeat, errorInputNoSpace,
+      editInput, sortAnchor, sortingPackage,
     } = this.props;
-    const index = callUpdate.newTodos.findIndex(
+    const index = listItemsPackage.newTodos.findIndex(
       newTodo => newTodo.id === id,
     );
 
-    const sameCheck = callUpdate.newTodos.find(function (item) {
-      return item.name === callUpdate.editingValue.trim() && item.id !== id;
+    const sameCheck = listItemsPackage.newTodos.find(function (item) {
+      return item.name === listItemsPackage.editingValue.trim() && item.id !== id;
     });
 
     if (sameCheck) {
-      onErrorInputNoRepeat({});
-      onInputEditing(
+      errorInputNoRepeat({});
+      editInput(
         {
-          InputEditingUpdate: id,
+          editing: id,
         },
       );
       return;
     }
-    if (callUpdate.editingValue.trim() === '') {
-      onErrorInputNoSpace({});
-      onInputEditing(
+    if (listItemsPackage.editingValue.trim() === '') {
+      errorInputNoSpace({});
+      editInput(
         {
-          InputEditingUpdate: id,
+          editing: id,
         },
       );
       return;
     }
-    callUpdate.newTodos[index].name = blurInputValue.trim();
-    onStateSorting({});
-    onErrorNormal({});
-    onInputEditing(
+    listItemsPackage.newTodos[index].name = blurInputValue.trim();
+    sortState({});
+    errorNormal({});
+    editInput(
       {
-        InputEditingUpdate: -1,
+        editing: -1,
       },
     );
 
-    if (sortingState.sortBy === 2) {
-      callUpdate.newTodos.sort(function (a, b) {
+    if (sortingPackage.sortBy === 2) {
+      listItemsPackage.newTodos.sort(function (a, b) {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
         if (nameA < nameB) {
-          return 1 * sortingState.sortName;
+          return 1 * sortingPackage.sortName;
         }
         if (nameA > nameB) {
-          return -1 * sortingState.sortName;
+          return -1 * sortingPackage.sortName;
         }
         return 0;
-      })
-    } else if (sortingState.sortBy === 1) {
+      });
+    } else if (sortingPackage.sortBy === 1) {
       // const {sortDate} = this.state;
-      callUpdate.newTodos.sort(function (a, b) {
-        return (b.date - a.date)*-1*sortingState.sortDate ;
+      listItemsPackage.newTodos.sort(function (a, b) {
+        return (b.date - a.date) * -1 * sortingPackage.sortDate;
       });
     }
-    onStateSorting({});
-    onSortingAnchor({
-      AnchorUpdate: null,
+    sortState({});
+    sortAnchor({
+      anchorEl: null,
     });
   }
 
   // this.isDateUpwardShown
   get isDateUpwardShown() {
     // const { data, classes } = this.props; //example of data-transfered
-    const { sortingState } = this.props;
-    return sortingState.sortDate === 1 && sortingState.sortBy === 1;
+    const { sortingPackage } = this.props;
+    return sortingPackage.sortDate === 1 && sortingPackage.sortBy === 1;
   }
 
   // this.isDateDownwardShown
   get isDateDownwardShown() {
-    const { sortingState } = this.props;
-    return sortingState.sortDate === -1 && sortingState.sortBy === 1;
+    const { sortingPackage } = this.props;
+    return sortingPackage.sortDate === -1 && sortingPackage.sortBy === 1;
   }
 
   // this.isDateUpwardShown
   get isNameUpwardShown() {
-    const { sortingState } = this.props;
-    return sortingState.sortName === -1 && sortingState.sortBy === 2;
+    const { sortingPackage } = this.props;
+    return sortingPackage.sortName === -1 && sortingPackage.sortBy === 2;
   }
 
   // this.isDateDownwardShown
   get isNameDownwardShown() {
-    const { sortingState } = this.props;
-    return sortingState.sortName === 1 && sortingState.sortBy === 2;
+    const { sortingPackage } = this.props;
+    return sortingPackage.sortName === 1 && sortingPackage.sortBy === 2;
   }
 
   handleTextChange = (event) => {
     const {
-      onItemSerNothing, callUpdate, onItemSerResult, onInputTarget, onErrorNormal,
+      searchNothing, listItemsPackage, searchResult, isChangeInput, errorNormal,
     } = this.props;
-    if (event.target instanceof HTMLInputElement) {
-      onInputTarget({
-        InputTargetUpdate: event.target.value,
-      });
+    // if (event.target instanceof HTMLInputElement) {
+    isChangeInput({
+      inputValue: event.target.value.trimLeft(),
+    });
 
-      onErrorNormal({});
-    }
+    errorNormal({});
+    // }
 
     if (event.target.value.trim() === '') {
-      onItemSerNothing({});
+      searchNothing({});
     } else {
       const options = {
         keys: ['name'],
       };
-      const fuse = new Fuse(callUpdate.newTodos, options);
+      const fuse = new Fuse(listItemsPackage.newTodos, options);
       const result = fuse.search(event.target.value.trim());
 
-      onItemSerResult(
+      searchResult(
         {
-          ResultUpdate: result,
+          todosResult: result,
         },
       );
     }
-    onErrorNormal({});
+    errorNormal({});
   }
 
   textChange = (item, editText) => {
-    const { onItemEdit, onErrorNormal } = this.props;
+    const { editItem, errorNormal } = this.props;
 
-    onItemEdit(
+    editItem(
       {
-        EditItem: item,
-        EditText: editText,
+        editItem: item,
+        editingValue: editText.trimLeft(),
       },
     );
-    onErrorNormal({});
-    onErrorNormal({});
+    errorNormal({});
   }
 
   textChangeBind = (value) => {
     const {
-      onItemEdit, callUpdate, onErrorInputNoSpace, onErrorInputNoRepeat, onErrorNormal, onInputEditing,
+      editItem, listItemsPackage, errorInputNoSpace, errorInputNoRepeat,
+      errorNormal, editInput,
     } = this.props;
-    if (callUpdate.editing === -1) {
-      onItemEdit({
-        EditItem: value,
-        EditText: value.name,
+    if (listItemsPackage.editing === -1) {
+      editItem({
+        editItem: value,
+        editingValue: value.name,
       });
 
-      onInputEditing({
-        InputEditingUpdate: callUpdate.editing === value.id ? -1 : value.id,
+      editInput({
+        editing: listItemsPackage.editing === value.id ? -1 : value.id,
       });
     } else {
-      const sameCheck = callUpdate.newTodos.find(function (item) {
-        return item.name === callUpdate.editingValue.trim() && item.id !== callUpdate.editing;
+      const sameCheck = listItemsPackage.newTodos.find(function (item) {
+        return item.name === listItemsPackage.editingValue.trim() && item.id !== listItemsPackage.editing;
       });
       if (sameCheck) {
-        onErrorInputNoRepeat({});
+        errorInputNoRepeat({});
         return;
       }
-      if (callUpdate.editingValue.trim() === '') {
-        onErrorInputNoSpace({});
+      if (listItemsPackage.editingValue.trim() === '') {
+        errorInputNoSpace({});
 
         return;
       }
 
-      onItemEdit(
+      editItem(
         {
-          EditItem: value,
-          EditText: value.name,
+          editItem: value,
+          editingValue: value.name,
         },
       );
 
-      onErrorNormal({});
+      errorNormal({});
 
-      onErrorNormal({});
-
-      onInputEditing(
+      editInput(
         {
-          InputEditingUpdate: callUpdate.editing === value.id ? -1 : value.id,
+          editing: listItemsPackage.editing === value.id ? -1 : value.id,
         },
       );
     }
   }
 
   handleToggle = value => () => {
-    const { onChecked, callUpdate } = this.props;
-    const currentIndex = callUpdate.checked.findIndex(item => item.id === value.id);
-    const newChecked = [...callUpdate.checked];
+    const { isChecked, listItemsPackage } = this.props;
+    const currentIndex = listItemsPackage.checked.findIndex(item => item.id === value.id);
+    const newChecked = [...listItemsPackage.checked];
 
     if (currentIndex === -1) {
       newChecked.push(value);
@@ -309,105 +311,106 @@ class CheckboxList extends React.Component {
       newChecked.splice(currentIndex, 1);
     }
 
-    onChecked({
-      CheckedUpdate: newChecked,
+    isChecked({
+      checked: newChecked,
     });
   };
 
   SortByName = () => {
     const {
-      onStateSorting, callUpdate, onSortingAnchor, onSortingBy, onSortingName, sortingState, onItemSerNothing,
+      sortState, listItemsPackage, sortAnchor, sortingBy,
+      sortingName, sortingPackage, searchNothing,
     } = this.props;
-    callUpdate.newTodos.sort(function (a, b) {
+    listItemsPackage.newTodos.sort(function (a, b) {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
       if (nameA < nameB) {
-        return -1 * sortingState.sortName;
+        return -1 * sortingPackage.sortName;
       }
       if (nameA > nameB) {
-        return 1 * sortingState.sortName;
+        return 1 * sortingPackage.sortName;
       }
       return 0;
     });
-    onStateSorting({});
+    sortState({});
 
-    onSortingAnchor({
-      AnchorUpdate: null,
+    sortAnchor({
+      anchorEl: null,
     });
 
-    onSortingBy({
-      SortByUpdate: 2,
+    sortingBy({
+      sortBy: 2,
     });
 
-    onSortingName({
-      SortNameUpdate: sortingState.sortName * -1,
+    sortingName({
+      sortName: sortingPackage.sortName * -1,
     });
 
-    onItemSerNothing({});
+    searchNothing({});
   }
 
-  SortByDate = () => {
+  sortByDate = () => {
     const {
-      onStateSorting, callUpdate, onSortingAnchor, onSortingBy, onSortingDate, sortingState, onItemSerNothing
+      sortState, listItemsPackage, sortAnchor, sortingBy,
+      sortingDate, sortingPackage, searchNothing,
     } = this.props;
 
-    callUpdate.newTodos.sort(function (a, b) {
-      return (b.date - a.date) * sortingState.sortDate;
+    listItemsPackage.newTodos.sort(function (a, b) {
+      return (b.date - a.date) * sortingPackage.sortDate;
     });
 
-    onStateSorting({});
-    onSortingAnchor({
-      AnchorUpdate: null,
+    sortState({});
+    sortAnchor({
+      anchorEl: null,
     });
-    onSortingBy({
-      SortByUpdate: 1,
+    sortingBy({
+      sortBy: 1,
     });
-    onSortingDate({
-      SortDateUpdate: sortingState.sortDate * -1,
+    sortingDate({
+      sortDate: sortingPackage.sortDate * -1,
     });
-    onItemSerNothing({});
+    searchNothing({});
   }
 
   handleOpen = (event) => {
-    const { onSortingAnchor } = this.props;
-    onSortingAnchor({
-      AnchorUpdate: event.currentTarget,
+    const { sortAnchor } = this.props;
+    sortAnchor({
+      anchorEl: event.currentTarget,
     });
   };
 
   handleClose = () => {
-    const { onSortingAnchor } = this.props;
+    const { sortAnchor } = this.props;
 
-    onSortingAnchor({
-      AnchorUpdate: null,
+    sortAnchor({
+      anchorEl: null,
     });
   };
 
   errorInfoNoRepeatInputFunc(value) {
-    const { errors, callUpdate } = this.props;
-    return errors.errorInfoNoRepeatInput !== false && callUpdate.editing === value.id;
+    const { errorsPackage, listItemsPackage } = this.props;
+    return errorsPackage.errorInfoNoRepeatInput !== false && listItemsPackage.editing === value.id;
   }
 
   errorInfoNoSpaceInputFunc(value) {
-    const { errors, callUpdate } = this.props;
-    return errors.errorInfoNoSpaceInput !== false && callUpdate.editing === value.id;
+    const { errorsPackage, listItemsPackage } = this.props;
+    return errorsPackage.errorInfoNoSpaceInput !== false && listItemsPackage.editing === value.id;
   }
 
   render() {
     const {
-      onItemDel, callUpdate,
-      errors: {
+      delItem, listItemsPackage,
+      errorsPackage: {
         errorInputLine, errorInfoNoSpace, errorInfoNoRepeat,
       },
-      sortingState: { anchorEl }, sortingState,
+      sortingPackage: { anchorEl }, sortingPackage,
     } = this.props;
-
 
     return (
       <div>
         <Input
           type="text"
-          value={callUpdate.inputValue}
+          value={listItemsPackage.inputValue}
           onChange={this.handleTextChange}
           onKeyPress={(event) => { if (event.key === 'Enter') { this.onClickAdd(); } }}
           placeholder="enter task"
@@ -447,7 +450,7 @@ class CheckboxList extends React.Component {
 
           <div
             className="filterListDiv"
-            style={{ display: callUpdate.todos.length === 0 && 'none' }}
+            style={{ display: listItemsPackage.todos.length === 0 && 'none' }}
           >
             <FormControl>
               <IconButton onClick={this.handleOpen}>
@@ -472,8 +475,8 @@ class CheckboxList extends React.Component {
                 <MenuList role="menu">
                   <MenuItem
                     className="sortList"
-                    onClick={this.SortByDate}
-                    style={{ backgroundColor: sortingState.sortBy === 1 && '#F5F5F5' }}
+                    onClick={this.sortByDate}
+                    style={{ backgroundColor: sortingPackage.sortBy === 1 && '#F5F5F5' }}
                   >
                     Time
                     <ArrowUpward
@@ -485,11 +488,11 @@ class CheckboxList extends React.Component {
                       style={{ display: !this.isDateDownwardShown && 'none' }}
                     />
                   </MenuItem>
-                  
+
                   <MenuItem
                     className="sortList"
                     onClick={this.SortByName}
-                    style={{ backgroundColor: sortingState.sortBy === 2 && '#F5F5F5' }}
+                    style={{ backgroundColor: sortingPackage.sortBy === 2 && '#F5F5F5' }}
                   >
                     Name
                     <ArrowUpward
@@ -509,76 +512,77 @@ class CheckboxList extends React.Component {
 
           <List>
             {
-              callUpdate.todos.map((value, index) => {
-                return (<ListItem
-                  key={index}
-                  role={undefined}
-                  dense
-                >
-                  <Checkbox
-                    checked={callUpdate.checked.indexOf(value) !== -1}
-                    onClick={this.handleToggle(value)}
-                    tabIndex={-1}
-                    disableRipple
-                  />
-
-                  <ListItemText
-                    className="ListItemText"
+              listItemsPackage.todos.map((value, index) => {
+                return (
+                  <ListItem
+                    key={index}
+                    role={undefined}
+                    dense
                   >
-
-                    <input
-                      autoFocus={callUpdate.editing}
-                      value={callUpdate.editingValue}
-                      onChange={event => this.textChange(value, event.target.value)}
-                      className="valinput"
-                      style={{ display: callUpdate.editing !== value.id && 'none' }}
-                      onBlur={event => this.onBlurInput(value.id, event.target.value)}
+                    <Checkbox
+                      checked={listItemsPackage.checked.indexOf(value) !== -1}
+                      onClick={this.handleToggle(value)}
+                      tabIndex={-1}
+                      disableRipple
                     />
-                    <span
-                      style={{ display: callUpdate.editing === value.id && 'none' }}
-                    >
-                      {value.name}
-                    </span>
-                    <span
-                      className="listValueDate"
-                    >
-                      {value.date.getFullYear()}
-                      /
-                      {value.date.getMonth()}
-                      /
-                      {value.date.getDate()}
-                    </span>
 
-                    <FormHelperText
-                      id="name-error-text"
-                      className="name-error-text-input"
-                      style={{ display: !this.errorInfoNoRepeatInputFunc(value) && 'none' }}
+                    <ListItemText
+                      className="ListItemText"
                     >
-                      Your list name cannot be repeated.
-                    </FormHelperText>
 
-                    <FormHelperText
-                      id="name-error-text"
-                      className="name-error-text-input-space"
-                      style={{ display: !this.errorInfoNoSpaceInputFunc(value) && 'none' }}
-                    >
-                      Your value cannot be empty.
-                    </FormHelperText>
-                  </ListItemText>
-
-                  <ListItemSecondaryAction>
-                    <IconButton aria-label="Create">
-                      <CreateIcon
-                        onClick={() => this.textChangeBind(value)}
+                      <input
+                        autoFocus={listItemsPackage.editing}
+                        value={listItemsPackage.editingValue}
+                        onChange={event => this.textChange(value, event.target.value)}
+                        className="valinput"
+                        style={{ display: listItemsPackage.editing !== value.id && 'none' }}
+                        onBlur={event => this.onBlurInput(value.id, event.target.value)}
                       />
-                    </IconButton>
-                    <IconButton aria-label="Delete">
-                      <DeleteIcon
-                        onClick={() => onItemDel(value.id)}
-                      />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                      <span
+                        style={{ display: listItemsPackage.editing === value.id && 'none' }}
+                      >
+                        {value.name}
+                      </span>
+                      <span
+                        className="listValueDate"
+                      >
+                        {value.date.getFullYear()}
+                        /
+                        {value.date.getMonth() + 1}
+                        /
+                        {value.date.getDate()}
+                      </span>
+
+                      <FormHelperText
+                        id="name-error-text"
+                        className="name-error-text-input"
+                        style={{ display: !this.errorInfoNoRepeatInputFunc(value) && 'none' }}
+                      >
+                        Your list name cannot be repeated.
+                      </FormHelperText>
+
+                      <FormHelperText
+                        id="name-error-text"
+                        className="name-error-text-input-space"
+                        style={{ display: !this.errorInfoNoSpaceInputFunc(value) && 'none' }}
+                      >
+                        Your value cannot be empty.
+                      </FormHelperText>
+                    </ListItemText>
+
+                    <ListItemSecondaryAction>
+                      <IconButton aria-label="Create">
+                        <CreateIcon
+                          onClick={() => this.textChangeBind(value)}
+                        />
+                      </IconButton>
+                      <IconButton aria-label="Delete">
+                        <DeleteIcon
+                          onClick={() => delItem(value.id)}
+                        />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 );
               })}
           </List>
@@ -588,12 +592,12 @@ class CheckboxList extends React.Component {
   }
 }
 
-const mapStateToProps = state => (
-  {
-    callUpdate: state.listItems,
-    errors: state.errors,
-    sortingState: state.sorting,
+const mapStateToProps = (state) => {
+  return {
+    listItemsPackage: state.listItems,
+    errorsPackage: state.errors,
+    sortingPackage: state.sorting,
   }
-);
+};
 
 export default connect(mapStateToProps, actionCreators)(CheckboxList);

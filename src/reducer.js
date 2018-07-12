@@ -1,11 +1,6 @@
 import { combineReducers } from 'redux';
 
 const initState = {
-  errorInfoNoSpaceInput: false,
-  errorInfoNoRepeatInput: false,
-  errorInputLine: false,
-  errorInfoNoSpace: false,
-  errorInfoNoRepeat: false,
   checked: [],
   anchorEl: null,
   sortBy: 1,
@@ -18,7 +13,15 @@ const initState = {
   newTodos: [],
 };
 
-function errors(state = initState, action) {
+const initErrors = {
+  errorInfoNoSpaceInput: false,
+  errorInfoNoRepeatInput: false,
+  errorInputLine: false,
+  errorInfoNoSpace: false,
+  errorInfoNoRepeat: false,
+};
+
+function errors(state = initErrors, action) {
   switch (action.type) {
     case 'ERROR_ADD_NO_SPACE':
     {
@@ -89,17 +92,17 @@ function listItems(state = initState, action) {
         todos: [
           ...state.newTodos,
           {
-            id: action.AddObj.AddId,
-            name: action.AddObj.AddName,
-            date: action.AddObj.AddDate,
+            id: action.val.id,
+            name: action.val.name,
+            date: action.val.date,
           },
         ],
         newTodos: [
           ...state.newTodos,
           {
-            id: action.AddObj.AddId,
-            name: action.AddObj.AddName,
-            date: action.AddObj.AddDate,
+            id: action.val.id,
+            name: action.val.name,
+            date: action.val.date,
           },
         ],
       };
@@ -109,7 +112,7 @@ function listItems(state = initState, action) {
     {
       const { newTodos } = state;
       const index = newTodos.findIndex(
-        newTodo => newTodo.id === action.DelObj,
+        newTodo => newTodo.id === action.val,
       );
       newTodos.splice(index, 1);
       const newState = {
@@ -123,14 +126,14 @@ function listItems(state = initState, action) {
     {
       const { todos, newTodos } = state;
       const index = newTodos.findIndex(
-        newTodo => newTodo.id === action.EditObj.EditItem.id,
+        newTodo => newTodo.id === action.val.editItem.id,
       );
-      todos[index].name = action.EditObj.EditText;
+      todos[index].name = action.val.editingValue;
       const newState = {
         ...state,
         todos: newTodos,
         newTodos,
-        editingValue: action.EditObj.EditText,
+        editingValue: action.val.editingValue,
       };
       return newState;
     }
@@ -148,7 +151,7 @@ function listItems(state = initState, action) {
     {
       const newState = {
         ...state,
-        todos: action.SerResultObj.ResultUpdate,
+        todos: action.val.todosResult,
       };
       return newState;
     }
@@ -164,7 +167,7 @@ function listItems(state = initState, action) {
     {
       const newState = {
         ...state,
-        inputValue: action.InputTargetObj.InputTargetUpdate,
+        inputValue: action.val.inputValue,
       };
       return newState;
     }
@@ -172,7 +175,7 @@ function listItems(state = initState, action) {
     {
       const newState = {
         ...state,
-        editing: action.InputEditingObj.InputEditingUpdate,
+        editing: action.val.editing,
       };
       return newState;
     }
@@ -180,7 +183,7 @@ function listItems(state = initState, action) {
     {
       const newState = {
         ...state,
-        checked: action.CheckedObj.CheckedUpdate,
+        checked: action.val.checked,
       };
       return newState;
     }
@@ -205,7 +208,7 @@ function sorting(state = initState, action) {
     {
       const newState = {
         ...state,
-        anchorEl: action.AnchorObj.AnchorUpdate,
+        anchorEl: action.val.anchorEl,
       };
       return newState;
     }
@@ -213,7 +216,7 @@ function sorting(state = initState, action) {
     {
       const newState = {
         ...state,
-        sortBy: action.SortByObj.SortByUpdate,
+        sortBy: action.val.sortBy,
       };
       return newState;
     }
@@ -221,7 +224,7 @@ function sorting(state = initState, action) {
     {
       const newState = {
         ...state,
-        sortName: action.SortNameObj.SortNameUpdate,
+        sortName: action.val.sortName,
       };
       return newState;
     }
@@ -229,7 +232,7 @@ function sorting(state = initState, action) {
     {
       const newState = {
         ...state,
-        sortDate: action.SortDateObj.SortDateUpdate,
+        sortDate: action.val.sortDate,
       };
       return newState;
     }
