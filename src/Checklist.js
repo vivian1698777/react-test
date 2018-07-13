@@ -29,7 +29,7 @@ class CheckboxList extends React.Component {
   static propTypes = {
     addItem: PropTypes.func,
     delItem: PropTypes.func,
-    listItemsPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    listItems: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     errorAddNoSpace: PropTypes.func,
     errorAddNoRepeat: PropTypes.func,
     errorNormal: PropTypes.func,
@@ -39,7 +39,7 @@ class CheckboxList extends React.Component {
     errorInputNoSpace: PropTypes.func,
     editInput: PropTypes.func,
     sortAnchor: PropTypes.func,
-    sortingPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    sorting: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     searchNothing: PropTypes.func,
     searchResult: PropTypes.func,
     isChangeInput: PropTypes.func,
@@ -48,13 +48,13 @@ class CheckboxList extends React.Component {
     sortingDate: PropTypes.func,
     sortingBy: PropTypes.func,
     sortingName: PropTypes.func,
-    errorsPackage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    errors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   };
 
   static defaultProps = {
     addItem: Function.prototype,
     delItem: Function.prototype,
-    listItemsPackage: Object.prototype,
+    listItems: Object.prototype,
     errorAddNoSpace: Function.prototype,
     errorAddNoRepeat: Function.prototype,
     errorNormal: Function.prototype,
@@ -64,7 +64,7 @@ class CheckboxList extends React.Component {
     errorInputNoSpace: Function.prototype,
     editInput: Function.prototype,
     sortAnchor: Function.prototype,
-    sortingPackage: Object.prototype,
+    sorting: Object.prototype,
     searchNothing: Function.prototype,
     searchResult: Function.prototype,
     isChangeInput: Function.prototype,
@@ -73,7 +73,7 @@ class CheckboxList extends React.Component {
     sortingDate: Function.prototype,
     sortingBy: Function.prototype,
     sortingName: Function.prototype,
-    errorsPackage: Object.prototype,
+    errors: Object.prototype,
   }
 
   constructor(props) {
@@ -85,11 +85,11 @@ class CheckboxList extends React.Component {
 
   onClickAdd = () => {
     const {
-      addItem, listItemsPackage, resetInput, errorAddNoSpace, errorAddNoRepeat, errorNormal,
+      addItem, listItems, resetInput, errorAddNoSpace, errorAddNoRepeat, errorNormal,
     } = this.props;
     const newId = this.nextId;
     this.nextId += 1;
-    const textAdd = listItemsPackage.inputValue.trim();
+    const textAdd = listItems.inputValue.trim();
 
     const dateNow = new Date();
 
@@ -100,16 +100,14 @@ class CheckboxList extends React.Component {
     }
     errorNormal({});
 
-    const sameCheck = listItemsPackage.todos.find(function (item) {
+    const sameCheck = listItems.todos.find(function (item) {
       return item.name === textAdd;
     });
 
-    console.log(listItemsPackage.todos);
     if (sameCheck !== undefined) {
       errorAddNoRepeat({});
       return;
     }
-    console.log(123);
 
     errorNormal({});
 
@@ -126,15 +124,15 @@ class CheckboxList extends React.Component {
 
   onBlurInput = (id, blurInputValue) => {
     const {
-      listItemsPackage, sortState, errorNormal, errorInputNoRepeat, errorInputNoSpace,
-      editInput, sortAnchor, sortingPackage,
+      listItems, sortState, errorNormal, errorInputNoRepeat, errorInputNoSpace,
+      editInput, sortAnchor, sorting,
     } = this.props;
-    const index = listItemsPackage.newTodos.findIndex(
+    const index = listItems.newTodos.findIndex(
       newTodo => newTodo.id === id,
     );
 
-    const sameCheck = listItemsPackage.newTodos.find(function (item) {
-      return item.name === listItemsPackage.editingValue.trim() && item.id !== id;
+    const sameCheck = listItems.newTodos.find(function (item) {
+      return item.name === listItems.editingValue.trim() && item.id !== id;
     });
 
     if (sameCheck) {
@@ -146,7 +144,7 @@ class CheckboxList extends React.Component {
       );
       return;
     }
-    if (listItemsPackage.editingValue.trim() === '') {
+    if (listItems.editingValue.trim() === '') {
       errorInputNoSpace({});
       editInput(
         {
@@ -155,7 +153,7 @@ class CheckboxList extends React.Component {
       );
       return;
     }
-    listItemsPackage.newTodos[index].name = blurInputValue.trim();
+    listItems.newTodos[index].name = blurInputValue.trim();
     sortState({});
     errorNormal({});
     editInput(
@@ -164,22 +162,22 @@ class CheckboxList extends React.Component {
       },
     );
 
-    if (sortingPackage.sortBy === 2) {
-      listItemsPackage.newTodos.sort(function (a, b) {
+    if (sorting.sortBy === 2) {
+      listItems.newTodos.sort(function (a, b) {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
         if (nameA < nameB) {
-          return 1 * sortingPackage.sortName;
+          return 1 * sorting.sortName;
         }
         if (nameA > nameB) {
-          return -1 * sortingPackage.sortName;
+          return -1 * sorting.sortName;
         }
         return 0;
       });
-    } else if (sortingPackage.sortBy === 1) {
+    } else if (sorting.sortBy === 1) {
       // const {sortDate} = this.state;
-      listItemsPackage.newTodos.sort(function (a, b) {
-        return (b.date - a.date) * -1 * sortingPackage.sortDate;
+      listItems.newTodos.sort(function (a, b) {
+        return (b.date - a.date) * -1 * sorting.sortDate;
       });
     }
     sortState({});
@@ -191,32 +189,33 @@ class CheckboxList extends React.Component {
   // this.isDateUpwardShown
   get isDateUpwardShown() {
     // const { data, classes } = this.props; //example of data-transfered
-    const { sortingPackage } = this.props;
-    return sortingPackage.sortDate === 1 && sortingPackage.sortBy === 1;
+    const { sorting } = this.props;
+    return sorting.sortDate === 1 && sorting.sortBy === 1;
   }
 
   // this.isDateDownwardShown
   get isDateDownwardShown() {
-    const { sortingPackage } = this.props;
-    return sortingPackage.sortDate === -1 && sortingPackage.sortBy === 1;
+    const { sorting } = this.props;
+    return sorting.sortDate === -1 && sorting.sortBy === 1;
   }
 
   // this.isDateUpwardShown
   get isNameUpwardShown() {
-    const { sortingPackage } = this.props;
-    return sortingPackage.sortName === -1 && sortingPackage.sortBy === 2;
+    const { sorting } = this.props;
+    return sorting.sortName === -1 && sorting.sortBy === 2;
   }
 
   // this.isDateDownwardShown
   get isNameDownwardShown() {
-    const { sortingPackage } = this.props;
-    return sortingPackage.sortName === 1 && sortingPackage.sortBy === 2;
+    const { sorting } = this.props;
+    return sorting.sortName === 1 && sorting.sortBy === 2;
   }
 
   handleTextChange = (event) => {
     const {
-      searchNothing, listItemsPackage, searchResult, isChangeInput, errorNormal,
+      searchNothing, listItems, searchResult, isChangeInput, errorNormal,
     } = this.props;
+    
     // if (event.target instanceof HTMLInputElement) {
     isChangeInput({
       inputValue: event.target.value.trimLeft(),
@@ -231,7 +230,7 @@ class CheckboxList extends React.Component {
       const options = {
         keys: ['name'],
       };
-      const fuse = new Fuse(listItemsPackage.newTodos, options);
+      const fuse = new Fuse(listItems.newTodos, options);
       const result = fuse.search(event.target.value.trim());
 
       searchResult(
@@ -257,27 +256,27 @@ class CheckboxList extends React.Component {
 
   textChangeBind = (value) => {
     const {
-      editItem, listItemsPackage, errorInputNoSpace, errorInputNoRepeat,
+      editItem, listItems, errorInputNoSpace, errorInputNoRepeat,
       errorNormal, editInput,
     } = this.props;
-    if (listItemsPackage.editing === -1) {
+    if (listItems.editing === -1) {
       editItem({
         editItem: value,
         editingValue: value.name,
       });
 
       editInput({
-        editing: listItemsPackage.editing === value.id ? -1 : value.id,
+        editing: listItems.editing === value.id ? -1 : value.id,
       });
     } else {
-      const sameCheck = listItemsPackage.newTodos.find(function (item) {
-        return item.name === listItemsPackage.editingValue.trim() && item.id !== listItemsPackage.editing;
+      const sameCheck = listItems.newTodos.find(function (item) {
+        return item.name === listItems.editingValue.trim() && item.id !== listItems.editing;
       });
       if (sameCheck) {
         errorInputNoRepeat({});
         return;
       }
-      if (listItemsPackage.editingValue.trim() === '') {
+      if (listItems.editingValue.trim() === '') {
         errorInputNoSpace({});
 
         return;
@@ -294,16 +293,16 @@ class CheckboxList extends React.Component {
 
       editInput(
         {
-          editing: listItemsPackage.editing === value.id ? -1 : value.id,
+          editing: listItems.editing === value.id ? -1 : value.id,
         },
       );
     }
   }
 
   handleToggle = value => () => {
-    const { isChecked, listItemsPackage } = this.props;
-    const currentIndex = listItemsPackage.checked.findIndex(item => item.id === value.id);
-    const newChecked = [...listItemsPackage.checked];
+    const { isChecked, listItems } = this.props;
+    const currentIndex = listItems.checked.findIndex(item => item.id === value.id);
+    const newChecked = [...listItems.checked];
 
     if (currentIndex === -1) {
       newChecked.push(value);
@@ -318,17 +317,17 @@ class CheckboxList extends React.Component {
 
   SortByName = () => {
     const {
-      sortState, listItemsPackage, sortAnchor, sortingBy,
-      sortingName, sortingPackage, searchNothing,
+      sortState, listItems, sortAnchor, sortingBy,
+      sortingName, sorting, searchNothing,
     } = this.props;
-    listItemsPackage.newTodos.sort(function (a, b) {
+    listItems.newTodos.sort(function (a, b) {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
       if (nameA < nameB) {
-        return -1 * sortingPackage.sortName;
+        return -1 * sorting.sortName;
       }
       if (nameA > nameB) {
-        return 1 * sortingPackage.sortName;
+        return 1 * sorting.sortName;
       }
       return 0;
     });
@@ -343,7 +342,7 @@ class CheckboxList extends React.Component {
     });
 
     sortingName({
-      sortName: sortingPackage.sortName * -1,
+      sortName: sorting.sortName * -1,
     });
 
     searchNothing({});
@@ -351,12 +350,12 @@ class CheckboxList extends React.Component {
 
   sortByDate = () => {
     const {
-      sortState, listItemsPackage, sortAnchor, sortingBy,
-      sortingDate, sortingPackage, searchNothing,
+      sortState, listItems, sortAnchor, sortingBy,
+      sortingDate, sorting, searchNothing,
     } = this.props;
 
-    listItemsPackage.newTodos.sort(function (a, b) {
-      return (b.date - a.date) * sortingPackage.sortDate;
+    listItems.newTodos.sort(function (a, b) {
+      return (b.date - a.date) * sorting.sortDate;
     });
 
     sortState({});
@@ -367,7 +366,7 @@ class CheckboxList extends React.Component {
       sortBy: 1,
     });
     sortingDate({
-      sortDate: sortingPackage.sortDate * -1,
+      sortDate: sorting.sortDate * -1,
     });
     searchNothing({});
   }
@@ -388,29 +387,29 @@ class CheckboxList extends React.Component {
   };
 
   errorInfoNoRepeatInputFunc(value) {
-    const { errorsPackage, listItemsPackage } = this.props;
-    return errorsPackage.errorInfoNoRepeatInput !== false && listItemsPackage.editing === value.id;
+    const { errors, listItems } = this.props;
+    return errors.errorInfoNoRepeatInput !== false && listItems.editing === value.id;
   }
 
   errorInfoNoSpaceInputFunc(value) {
-    const { errorsPackage, listItemsPackage } = this.props;
-    return errorsPackage.errorInfoNoSpaceInput !== false && listItemsPackage.editing === value.id;
+    const { errors, listItems } = this.props;
+    return errors.errorInfoNoSpaceInput !== false && listItems.editing === value.id;
   }
 
   render() {
     const {
-      delItem, listItemsPackage,
-      errorsPackage: {
+      delItem, listItems,
+      errors: {
         errorInputLine, errorInfoNoSpace, errorInfoNoRepeat,
       },
-      sortingPackage: { anchorEl }, sortingPackage,
+      sorting: { anchorEl }, sorting,
     } = this.props;
 
     return (
       <div>
         <Input
           type="text"
-          value={listItemsPackage.inputValue}
+          value={listItems.inputValue}
           onChange={this.handleTextChange}
           onKeyPress={(event) => { if (event.key === 'Enter') { this.onClickAdd(); } }}
           placeholder="enter task"
@@ -450,7 +449,7 @@ class CheckboxList extends React.Component {
 
           <div
             className="filterListDiv"
-            style={{ display: listItemsPackage.todos.length === 0 && 'none' }}
+            style={{ display: listItems.todos.length === 0 && 'none' }}
           >
             <FormControl>
               <IconButton onClick={this.handleOpen}>
@@ -476,7 +475,7 @@ class CheckboxList extends React.Component {
                   <MenuItem
                     className="sortList"
                     onClick={this.sortByDate}
-                    style={{ backgroundColor: sortingPackage.sortBy === 1 && '#F5F5F5' }}
+                    style={{ backgroundColor: sorting.sortBy === 1 && '#F5F5F5' }}
                   >
                     Time
                     <ArrowUpward
@@ -492,7 +491,7 @@ class CheckboxList extends React.Component {
                   <MenuItem
                     className="sortList"
                     onClick={this.SortByName}
-                    style={{ backgroundColor: sortingPackage.sortBy === 2 && '#F5F5F5' }}
+                    style={{ backgroundColor: sorting.sortBy === 2 && '#F5F5F5' }}
                   >
                     Name
                     <ArrowUpward
@@ -512,7 +511,7 @@ class CheckboxList extends React.Component {
 
           <List>
             {
-              listItemsPackage.todos.map((value, index) => {
+              listItems.todos.map((value, index) => {
                 return (
                   <ListItem
                     key={index}
@@ -520,7 +519,7 @@ class CheckboxList extends React.Component {
                     dense
                   >
                     <Checkbox
-                      checked={listItemsPackage.checked.indexOf(value) !== -1}
+                      checked={listItems.checked.indexOf(value) !== -1}
                       onClick={this.handleToggle(value)}
                       tabIndex={-1}
                       disableRipple
@@ -531,15 +530,15 @@ class CheckboxList extends React.Component {
                     >
 
                       <input
-                        autoFocus={listItemsPackage.editing}
-                        value={listItemsPackage.editingValue}
+                        autoFocus={listItems.editing}
+                        value={listItems.editingValue}
                         onChange={event => this.textChange(value, event.target.value)}
                         className="valinput"
-                        style={{ display: listItemsPackage.editing !== value.id && 'none' }}
+                        style={{ display: listItems.editing !== value.id && 'none' }}
                         onBlur={event => this.onBlurInput(value.id, event.target.value)}
                       />
                       <span
-                        style={{ display: listItemsPackage.editing === value.id && 'none' }}
+                        style={{ display: listItems.editing === value.id && 'none' }}
                       >
                         {value.name}
                       </span>
@@ -594,9 +593,9 @@ class CheckboxList extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    listItemsPackage: state.listItems,
-    errorsPackage: state.errors,
-    sortingPackage: state.sorting,
+    listItems: state.listItems,
+    errors: state.errors,
+    sorting: state.sorting,
   }
 };
 
