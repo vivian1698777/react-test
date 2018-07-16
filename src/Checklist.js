@@ -424,7 +424,7 @@ class CheckboxList extends React.Component {
           onClick={this.onClickAdd}
           variant="contained"
           color="primary"
-          disableRipple={true}
+          // disableRipple={true}
         >
             Add item
         </Button>
@@ -511,79 +511,77 @@ class CheckboxList extends React.Component {
 
           <List>
             {
-              listItems.todos.map((value) => {
-                return (
-                  <ListItem
-                    key={value.id}
-                    role={undefined}
-                    dense
+              listItems.todos.map(value => (
+                <ListItem
+                  key={value.id}
+                  role={undefined}
+                  dense
+                >
+                  <Checkbox
+                    checked={listItems.checked.indexOf(value) !== -1}
+                    onClick={this.handleToggle(value)}
+                    tabIndex={-1}
+                    disableRipple
+                  />
+
+                  <ListItemText
+                    className="ListItemText"
                   >
-                    <Checkbox
-                      checked={listItems.checked.indexOf(value) !== -1}
-                      onClick={this.handleToggle(value)}
-                      tabIndex={-1}
-                      disableRipple
+
+                    <input
+                      // autoFocus={listItems.editing}
+                      value={listItems.editingValue}
+                      onChange={event => this.textChange(value, event.target.value)}
+                      className="valinput"
+                      style={{ display: listItems.editing !== value.id && 'none' }}
+                      onBlur={event => this.onBlurInput(value.id, event.target.value)}
                     />
-
-                    <ListItemText
-                      className="ListItemText"
+                    <span
+                      style={{ display: listItems.editing === value.id && 'none' }}
                     >
+                      {value.name}
+                    </span>
+                    <span
+                      className="listValueDate"
+                    >
+                      {value.date.getFullYear()}
+                      /
+                      {value.date.getMonth() + 1}
+                      /
+                      {value.date.getDate()}
+                    </span>
 
-                      <input
-                        autoFocus={listItems.editing}
-                        value={listItems.editingValue}
-                        onChange={event => this.textChange(value, event.target.value)}
-                        className="valinput"
-                        style={{ display: listItems.editing !== value.id && 'none' }}
-                        onBlur={event => this.onBlurInput(value.id, event.target.value)}
+                    <FormHelperText
+                      id="name-error-text"
+                      className="name-error-text-input"
+                      style={{ display: !this.errorInfoNoRepeatInputFunc(value) && 'none' }}
+                    >
+                      Your list name cannot be repeated.
+                    </FormHelperText>
+
+                    <FormHelperText
+                      id="name-error-text"
+                      className="name-error-text-input-space"
+                      style={{ display: !this.errorInfoNoSpaceInputFunc(value) && 'none' }}
+                    >
+                      Your value cannot be empty.
+                    </FormHelperText>
+                  </ListItemText>
+
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label="Create">
+                      <CreateIcon
+                        onClick={() => this.textChangeBind(value)}
                       />
-                      <span
-                        style={{ display: listItems.editing === value.id && 'none' }}
-                      >
-                        {value.name}
-                      </span>
-                      <span
-                        className="listValueDate"
-                      >
-                        {value.date.getFullYear()}
-                        /
-                        {value.date.getMonth() + 1}
-                        /
-                        {value.date.getDate()}
-                      </span>
-
-                      <FormHelperText
-                        id="name-error-text"
-                        className="name-error-text-input"
-                        style={{ display: !this.errorInfoNoRepeatInputFunc(value) && 'none' }}
-                      >
-                        Your list name cannot be repeated.
-                      </FormHelperText>
-
-                      <FormHelperText
-                        id="name-error-text"
-                        className="name-error-text-input-space"
-                        style={{ display: !this.errorInfoNoSpaceInputFunc(value) && 'none' }}
-                      >
-                        Your value cannot be empty.
-                      </FormHelperText>
-                    </ListItemText>
-
-                    <ListItemSecondaryAction>
-                      <IconButton aria-label="Create">
-                        <CreateIcon
-                          onClick={() => this.textChangeBind(value)}
-                        />
-                      </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon
-                          onClick={() => delItem(value.id)}
-                        />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
+                    </IconButton>
+                    <IconButton aria-label="Delete">
+                      <DeleteIcon
+                        onClick={() => delItem(value.id)}
+                      />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
           </List>
         </div>
       </div>
