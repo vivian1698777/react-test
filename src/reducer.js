@@ -135,6 +135,7 @@ function listItems(state = initState, action) {
         newTodos,
         editingValue: action.val.editingValue,
       };
+      console.log(action.val.editItem);
       return newState;
     }
     case 'SEARCH_NOTHING':

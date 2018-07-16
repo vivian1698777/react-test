@@ -215,7 +215,7 @@ class CheckboxList extends React.Component {
     const {
       searchNothing, listItems, searchResult, isChangeInput, errorNormal,
     } = this.props;
-    
+
     // if (event.target instanceof HTMLInputElement) {
     isChangeInput({
       inputValue: event.target.value.trimLeft(),
@@ -511,10 +511,10 @@ class CheckboxList extends React.Component {
 
           <List>
             {
-              listItems.todos.map((value, index) => {
+              listItems.todos.map((value) => {
                 return (
                   <ListItem
-                    key={index}
+                    key={value.id}
                     role={undefined}
                     dense
                   >
@@ -591,12 +591,12 @@ class CheckboxList extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
+const mapStateToProps = state => (
+  {
     listItems: state.listItems,
     errors: state.errors,
     sorting: state.sorting,
   }
-};
+);
 
 export default connect(mapStateToProps, actionCreators)(CheckboxList);
